@@ -5,6 +5,7 @@ from sqlalchemy.orm import selectinload
 
 from fastapi_project.models import Department, User, UserProfile
 from fastapi_project.schemas import DepartmentCreate, UserCreate, UserProfileCreate
+from fastapi_project.security import hash_password
 
 
 class DuplicateUserProfileError(Exception):
@@ -40,7 +41,12 @@ class RelationshipRepository:
         department = await self.db.get(Department, department_id)
         if department is None:
             return None
-        user = User(**user_data.model_dump(), department=department)
+        user_values = user_data.model_dump(exclude={"password"})
+        user = User(
+            **user_values,
+            password_hash=hash_password(user_data.password),
+            department=department,
+        )
         self.db.add(user)
         try:
             await self.db.commit()

@@ -5,6 +5,7 @@ from sqlalchemy.orm import joinedload
 
 from fastapi_project.models import User
 from fastapi_project.schemas import UserCreate, UserUpdate
+from fastapi_project.security import hash_password
 
 
 class UserRepository:
@@ -12,7 +13,8 @@ class UserRepository:
         self.db = db
 
     async def create(self, user_data: UserCreate) -> User:
-        user = User(**user_data.model_dump())
+        user_values = user_data.model_dump(exclude={"password"})
+        user = User(**user_values, password_hash=hash_password(user_data.password))
         self.db.add(user)
         try:
             await self.db.commit()
@@ -28,6 +30,10 @@ class UserRepository:
             .options(joinedload(User.department))
             .where(User.id == user_id)
         )
+        return result.one_or_none()
+
+    async def get_by_email(self, email: str) -> User | None:
+        result = await self.db.scalars(select(User).where(User.email == email))
         return result.one_or_none()
 
     async def get_all(self, skip: int = 0, limit: int = 100) -> list[User]:

@@ -18,8 +18,11 @@ from fastapi_project.schemas import (
     UserProfileRead,
     UserRead,
 )
+from fastapi_project.security import get_current_user
 
-router = APIRouter(tags=["relationships"])
+router = APIRouter(
+    tags=["relationships"], dependencies=[Depends(get_current_user)]
+)
 DatabaseSession = Annotated[AsyncSession, Depends(get_db)]
 
 

@@ -6,6 +6,7 @@ from fastapi_project.schemas.relationships import (
 	UserProfileRead,
 	UserWithDepartment,
 )
+from fastapi_project.schemas.auth import Token
 from fastapi_project.schemas.skill import (
 	SkillCreate,
 	SkillRead,
@@ -21,6 +22,7 @@ __all__ = [
 	"DepartmentWithUsers",
 	"SkillCreate",
 	"SkillRead",
+	"Token",
 	"UserCreate",
 	"UserProfileCreate",
 	"UserProfileRead",

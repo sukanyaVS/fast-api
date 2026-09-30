@@ -13,8 +13,9 @@ from fastapi_project.schemas import (
     UserWithSkills,
 )
 from fastapi_project.services import DuplicateSkillError, SkillService
+from fastapi_project.security import get_current_user
 
-router = APIRouter(tags=["skills"])
+router = APIRouter(tags=["skills"], dependencies=[Depends(get_current_user)])
 DatabaseSession = Annotated[AsyncSession, Depends(get_db)]
 
 

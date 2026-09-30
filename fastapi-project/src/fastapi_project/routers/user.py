@@ -7,6 +7,7 @@ from fastapi_project.database import get_db
 from fastapi_project.repositories import UserRepository
 from fastapi_project.schemas import UserCreate, UserRead, UserUpdate, UserWithDepartment
 from fastapi_project.services import DuplicateEmailError, UserService
+from fastapi_project.security import get_current_user
 
 router = APIRouter(prefix="/users", tags=["users"])
 DatabaseSession = Annotated[AsyncSession, Depends(get_db)]
@@ -30,7 +31,7 @@ async def create_user(user_data: UserCreate, service: UserServiceDependency) -> 
         ) from None
 
 
-@router.get("", response_model=list[UserRead])
+@router.get("", response_model=list[UserRead], dependencies=[Depends(get_current_user)])
 async def list_users(
     service: UserServiceDependency,
     skip: Annotated[int, Query(ge=0)] = 0,
@@ -39,7 +40,7 @@ async def list_users(
     return await service.get_users(skip, limit)
 
 
-@router.get("/{user_id}", response_model=UserWithDepartment)
+@router.get("/{user_id}", response_model=UserWithDepartment, dependencies=[Depends(get_current_user)])
 async def get_user(user_id: int, service: UserServiceDependency) -> UserWithDepartment:
     user = await service.get_user(user_id)
     if user is None:
@@ -47,7 +48,7 @@ async def get_user(user_id: int, service: UserServiceDependency) -> UserWithDepa
     return user
 
 
-@router.put("/{user_id}", response_model=UserRead)
+@router.put("/{user_id}", response_model=UserRead, dependencies=[Depends(get_current_user)])
 async def update_user(
     user_id: int, user_data: UserUpdate, service: UserServiceDependency
 ) -> UserRead:
@@ -63,7 +64,11 @@ async def update_user(
     return user
 
 
-@router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{user_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[Depends(get_current_user)],
+)
 async def delete_user(user_id: int, service: UserServiceDependency) -> Response:
     deleted = await service.delete_user(user_id)
     if not deleted:

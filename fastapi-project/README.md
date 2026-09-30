@@ -23,6 +23,10 @@ The relationship migration follows the existing user-table revisions. Apply it w
 
 Open `/docs` to try these endpoints:
 
+- `POST /users` registers a user with `name`, `email`, and a password of at least 8 characters.
+- `POST /auth/token` accepts OAuth2 form fields (`username` is the email) and returns a bearer token.
+- `GET /auth/me` returns the authenticated user.
+- Include `Authorization: Bearer <token>` for user management, relationships, and skills endpoints.
 - `POST /departments` creates a department.
 - `POST /departments/{department_id}/users` creates a user in that department.
 - `GET /departments/{department_id}` returns the department and its users.
@@ -40,7 +44,7 @@ Example request bodies:
 ```
 
 ```json
-{"name": "Alex", "email": "alex@example.com"}
+{"name": "Alex", "email": "alex@example.com", "password": "a-long-password"}
 ```
 
 ```json
@@ -54,3 +58,5 @@ Example request bodies:
 ```json
 {"skill_id": 1, "level": "advanced"}
 ```
+
+Set `JWT_SECRET_KEY` to a strong random value before deployment. Existing user records have no password hash and must be re-registered or otherwise assigned credentials before they can log in.
