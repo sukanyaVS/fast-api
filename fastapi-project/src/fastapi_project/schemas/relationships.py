@@ -18,6 +18,10 @@ class DepartmentWithUsers(DepartmentRead):
     users: list[UserRead]
 
 
+class UserWithDepartment(UserRead):
+    department: DepartmentRead | None
+
+
 class UserProfileCreate(BaseModel):
     bio: str | None = Field(default=None, max_length=500)
 

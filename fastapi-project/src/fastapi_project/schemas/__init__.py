@@ -4,6 +4,7 @@ from fastapi_project.schemas.relationships import (
 	DepartmentWithUsers,
 	UserProfileCreate,
 	UserProfileRead,
+	UserWithDepartment,
 )
 from fastapi_project.schemas.user import UserCreate, UserRead, UserUpdate
 
@@ -16,4 +17,5 @@ __all__ = [
 	"UserProfileRead",
 	"UserRead",
 	"UserUpdate",
+	"UserWithDepartment",
 ]

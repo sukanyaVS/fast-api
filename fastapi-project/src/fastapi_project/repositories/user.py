@@ -1,6 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 
 from fastapi_project.models import User
 from fastapi_project.schemas import UserCreate, UserUpdate
@@ -22,7 +23,12 @@ class UserRepository:
         return user
 
     async def get_by_id(self, user_id: int) -> User | None:
-        return await self.db.get(User, user_id)
+        result = await self.db.scalars(
+            select(User)
+            .options(joinedload(User.department))
+            .where(User.id == user_id)
+        )
+        return result.one_or_none()
 
     async def get_all(self, skip: int = 0, limit: int = 100) -> list[User]:
         result = await self.db.scalars(

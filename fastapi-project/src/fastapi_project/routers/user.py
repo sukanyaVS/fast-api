@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from fastapi_project.database import get_db
 from fastapi_project.repositories import UserRepository
-from fastapi_project.schemas import UserCreate, UserRead, UserUpdate
+from fastapi_project.schemas import UserCreate, UserRead, UserUpdate, UserWithDepartment
 from fastapi_project.services import DuplicateEmailError, UserService
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -39,8 +39,8 @@ async def list_users(
     return await service.get_users(skip, limit)
 
 
-@router.get("/{user_id}", response_model=UserRead)
-async def get_user(user_id: int, service: UserServiceDependency) -> UserRead:
+@router.get("/{user_id}", response_model=UserWithDepartment)
+async def get_user(user_id: int, service: UserServiceDependency) -> UserWithDepartment:
     user = await service.get_user(user_id)
     if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
