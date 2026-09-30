@@ -20,3 +20,11 @@ class User(Base):
         back_populates="user", cascade="all, delete-orphan", uselist=False
     )
     department: Mapped[Department | None] = relationship(back_populates="users")
+    user_skills: Mapped[list[UserSkill]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    skills: Mapped[list[Skill]] = relationship(
+        secondary="user_skills",
+        back_populates="users",
+    )
