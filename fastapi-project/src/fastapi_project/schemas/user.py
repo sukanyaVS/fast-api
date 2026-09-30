@@ -20,3 +20,4 @@ class UserRead(BaseModel):
     id: int
     name: str
     email: str
+    department_id: int | None
